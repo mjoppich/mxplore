@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<script>
+
+  const igv_gene="{{gene_family}}";
+  const igv_mirna="{{mirna_family}}";
+  const igv_organisms="{{organisms}}";
+
+</script>
+
+  <p>
+    <h2>Interaction Details</h2>
+    <table id="data" class="table table-striped">
+      <thead>
+        <tr>
+          <th>miRNA Family</th>
+          <th>Gene</th>
+          <th>Interaction</th>
+          <th>Organisms</th>
+          <th>Evidence Count</th>
+          <th>Consensus</th>
+        </tr>
+        <tr>
+          <td>{{ mirna_family }}</td>
+          <td>{{ gene_family }}</td>
+          <td>{{ interaction }}</td>
+          <td>{{ organisms }}</td>
+          <td>{{ evidences }}</td>
+          <td>{{ consensus }}</td>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+  </p>
+
+  {% if (annotations|length > 0) %}
+  <p>
+    <h2>Interaction Context</h2>
+    Words are displayed larger the more frequent a word (or term) is mentioned in all evidence articles.
+    <div id="wordcloud_div"></div>
+  </p>
+  {% endif %}
+
+  <p>
+    <h2>Interaction Binding Sites</h2>
+    Human gene structure and <a href="https://www.targetscan.org/vert_80/">TargetScan</a> miRNA binding site predictions (conserved sites of conserved miRNA families). If no miRNA binding sites are shown, no <it>conserved</it> sites of conserved miRNA families were predicted.
+    <div id="isar-viewer"></div>
+  </p>
+
+  <p>
+    <h2>Interaction Evidences</h2>
+    Sentences in which evidence for the displayed miRNA-gene interaction and direction are found. Both miRNA and gene are highlighted.
+    <table id="sentences" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Document</th>
+          <th>Sentence</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in sentences %}
+        <tr>
+          <td>{{ item.docid_source | safe }}</td>
+          <td>{{ item.docid_link | safe }}</td>
+          <td>{{ item.sent_high | safe}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </p>
+
+  <p>
+    <h2>Interaction Timeline</h2>
+    Timeline plot of the timeline articles. The relation of the articles along the time axis is visible, and the articles are briefly described in terms of their main content (regarding cell lines, biological processes and diseases).
+    <img src="{{ timeline_url }}" width="100%"/>
+  </p>
+
+<script type="text/javascript" charset="utf8" src="{{url_for('static', filename='genomicviewer.js')}}"></script>
+
+  <!-- Load d3.js from https://github.com/wvengen/d3-wordcloud -->
+<script type="text/javascript" charset="utf8" src="{{url_for('static', filename='d3.js')}}"></script>
+<script type="text/javascript" charset="utf8" src="{{url_for('static', filename='d3.layout.cloud.js')}}"></script>
+<script type="text/javascript" charset="utf8" src="{{url_for('static', filename='d3.wordcloud.js')}}"></script>
+
+{% if (annotations|length > 0) %}
+  <script>
+    // List of words
+    var myWords = {{annotations|safe}}
+
+
+    //$(window ).on("load", function () {
+    $( document ).ready(function() {
+
+      d3.wordcloud()
+      .size([800, 400])
+      .selector('#wordcloud_div')
+      .words(myWords)
+      .scale("log")
+      .start();
+
+    });
+    </script>
+  {% endif %}
+{% endblock %}

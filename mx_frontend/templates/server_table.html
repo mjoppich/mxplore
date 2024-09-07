@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script>
+
+  filter_context_fine = function()
+  {
+
+    const agg_value = $('#filter_cellline').val() + "|" + $('#filter_concepts').val() + "|" + $('#filter_disease').val()
+
+    console.log("Filter context fine")
+    console.log(agg_value)
+
+    $('#yadcf-filter--data-6').val(agg_value)
+
+    $('#yadcf-filter--data-6').keyup();
+
+    //yadcf.doFilter($('#yadcf-filter--data-6'), '-data', 6, 'contains');
+  }
+
+  reset_context_find = function()
+  {
+
+    $('#filter_cellline').val("")
+    $('#filter_concepts').val("")
+    $('#filter_disease').val("")
+
+    yadcf.textKeyUP(null, '-data', '6', 'clear');
+
+  }
+
+  prepare_multi_filter = function()
+  {  
+    document.getElementById("yadcf-filter--data-6").style.display="none";
+  }
+
+</script>
+
+<div>
+  <h3>Context Filter</h3>
+  <div style="padding: 50px 0px 50px 0px">
+    <table>
+      <tr><th>Cell line/type</th><th><input id="filter_cellline" type="text"/></th></tr>
+      <tr><th>Concepts</th><th><input id="filter_concepts" type="text"/></th></tr>
+      <tr><th>Disease</th><th><input id="filter_disease" type="text"/></th></tr>
+    </table>
+    <input type="button" onclick="filter_context_fine();" value="Filter" class="some_btn general_btn">
+    <input type="button" onclick="reset_context_find();" value="Reset", class="some_btn general_btn">
+    <span style="display: table">By filtering interactions only interactions are shown which fulfill the condition (e.g. mentioned in macrophages and atherosclerosis). The number of evidence documents and consensus interactions are not updated.</span>
+  </div>
+</div>
+
+
+<div class="row" style="float: right">
+  <span>Context Search:</span>
+  <div id="context_filter"></div>
+</div>
+
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>miRNA Family</th>
+        <th>Gene</th>
+        <th>Interaction</th>
+        <th>Organisms</th>
+        <th>Evidence Count</th>
+        <th>Consensus</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Meaning</th>
+      </tr>
+      <tr><td>miRNA Family</td><td>miRNA name at pre-cursor level</td></tr>
+      <tr><td>Gene</td><td>Gene symbol of identified HGNC id</td></tr>
+      <tr><td>Interaction</td><td>Type of interaction between miRNA and gene</td></tr>
+      <tr><td>Organisms</td><td>Organisms detected in the associate literature</td></tr>
+      <tr><td>Evidence Count</td><td>Number of documents identified for this interactions. This does not update upon filtering for context.</td></tr>
+      <tr><td>Consensus</td><td>Whether it is the most abundant interaction.</td></tr>
+      <tr><td>Details</td><td>Link to the details page with all text mining evidence.</td></tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+
+      const combo = [
+        ["MIR_GENE", "GENE_MIR"],
+        ["DOWN", "NEU", "UP"]
+      ];
+
+      const all_combinations = [];
+      for (let i = 0; i < combo[0].length; i++)
+      {
+        for (let j = 0; j < combo[1].length; j++)
+        {
+          all_combinations.push( combo[0][i] + ";" + combo[1][j])
+        }
+      }
+
+      console.log(all_combinations)
+
+      //{{host}}/
+      var myTable = $('#data').DataTable({
+        ajax: 'api/data',
+        colReorder: true,
+        serverSide: true,
+        processing: true,
+        columns: [
+          {data: 'miRNA_family'},
+          {data: 'gene_family'},
+          {data: 'interaction'},
+          {data: 'organisms'},
+          {data: 'evidence_count'},
+          {data: 'is_consensus'},
+          {data: 'details'}
+        ],
+        "stateSave": false
+      });
+
+
+      yadcf.init(myTable, [
+      {
+        column_number : 0,
+        filter_type: "text",
+        filter_delay: 200
+      },
+      {
+        column_number : 1,
+        filter_type: "text",
+        filter_delay: 200
+      },
+      { 
+        column_number : 2,
+        select_type: "chosen",
+        data: all_combinations,
+       select_type_options: {no_results_text: 'Can\'t find ->', search_contains: true}
+      },
+      {
+        column_number : 3,
+        select_type: "chosen", data: ["hsa", "mmu", "hsa;mmu"],
+        select_type_options: {no_results_text: 'Can\'t find ->', search_contains: true}
+      },
+      {column_number: 4, filter_type: "range_number"},
+      { column_number : 5, select_type: "chosen", data: ["yes", "no"]},
+      {
+        column_number : 6,
+        filter_type: 'text',
+        filter_delay: 500
+      }
+      ], {
+        onInitComplete: function () {
+          prepare_multi_filter()
+        }
+      }
+      );
+
+
+  });
+
+  </script>
+
+
+{% endblock %}

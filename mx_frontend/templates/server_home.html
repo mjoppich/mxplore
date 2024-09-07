@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Home</h1>
+
+
+<p>
+    Micro-RNAs (miRNAs) are potent disease modulators due to their distinct interactions with specific genes in diseases and cell types.
+    Most of these interactions are post-transcriptional regulations: miRNAs bind to the mRNA of genes and induce their degradation, thereby reducing the gene expression of target genes.
+</p>
+
+<p>
+    While there are many databases listing miRNA-gene interactions, retrieved from computational predictions or imputed from specific high-throughput data, most confirmation low-throughput experiments are published in text form.
+    Hence, retrieving experimentally verified miRNA-gene interactions from literature, abstracts or full-texts, is an extremely important and useful task for assessing the actual miRNA-gene interaction landscape.
+</p>
+<p>
+    To derive the mx-plore database a newly developed text mining strategy combining dependency graph analysis and rule-based systems has been developed. Identified interactions are saved in a database along terms describing the context of the miRNA-gene interaction containing document.
+    Our mx-plore platform makes the such identified miRNA-gene interactions accessible and searchable, even by cell type, disease or involved processes.
+</p>
+
+{% endblock %}

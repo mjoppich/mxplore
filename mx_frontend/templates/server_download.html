@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style type='text/css'>
+  .scheme { 
+    font-family: Consolas,monaco,monospace; 
+  }
+</style>
+
+<h1>Download</h1>
+
+
+<p>
+    <h2>Interaction Details</h2>
+    <table id="data" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Download</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+            <td><a href="/{{host}}/file_downloads/sqlite">Download</a></td>
+            <td>sqlite database underlying this website.</td>
+        </tr>
+        <tr>
+          <td><a href="/{{host}}/file_downloads/mxtable">Download</a></td>
+          <td>DataFrame containing all miRNA-gene interactions in tsv format. The DataFrame is a dump of the mx-table of the database.</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+</p>
+
+<p>
+<h2>Database schema</h2>
+<span>
+  <p>Description of the tables contained in the downloadable sqlite database.</p>
+</span>
+<span class="scheme">
+<p>CREATE TABLE "mx" (<br />
+"index" INTEGER PRIMARY KEY AUTOINCREMENT,<br />
+"miRNA_family" TEXT, # miRNA ID<br />
+"gene_family" TEXT, # gene ID<br />
+"interaction" TEXT, # interaction and direction; e.g. (MIR_GENE; NEU)<br />
+"organisms" TEXT, # hsa (human), mmu (mouse)<br />
+"evidence_documents" TEXT, # delimited list of article IDs which contain the interaction<br />
+"sent_evidences" TEXT, #delimited list of sentences and locations which contain the interaction; (sentence ID, gene start/stop, miRNA start/stop, )<br />
+"evidence_count" INTEGER, # number of evidence documents<br />
+"sent_count" INTEGER, # number of different evidence sentences<br />
+"is_consensus" INTEGER # 1 if interaction is most frequent for miRNA-gene pair<br />
+)</p>
+
+<p>CREATE TABLE "mx_int" (<br />
+"index" INTEGER PRIMARY KEY AUTOINCREMENT,<br />
+"miRNA_family" TEXT, # miRNA ID<br />
+"gene_family" TEXT, # gene ID<br />
+"interaction" TEXT, # interaction and direction; e.g. (MIR_GENE; NEU)<br />
+"evidence_documents" TEXT # document ID containing miRNA-gene interaction<br />
+)</p>
+
+<p>CREATE TABLE "mx_annot" (<br />
+"index" INTEGER PRIMARY KEY AUTOINCREMENT,<br />
+"doc_id" TEXT, # document ID<br />
+"annotation" TEXT, # which type of annotation; GeneOntology, disease, ...<br />
+"concept_id" TEXT, # concept/term ID<br />
+"concept" TEXT,  # concept description/name<br />
+"num_occurrences" INTEGER,  # number of occurrences of concept in document<br />
+"sent_evidences" TEXT # sentence ID, start, stop of occurrences<br />
+)</p>
+
+<p>CREATE TABLE "mx_sent" (<br />
+"index" INTEGER PRIMARY KEY AUTOINCREMENT,<br />
+"doc_id" TEXT, # document ID<br />
+"sent_id" TEXT, # sentence ID<br />
+"sentence" TEXT # sentence text<br />
+)</p>
+<p>CREATE TABLE "mx_dates" (<br />
+"index" INTEGER PRIMARY KEY AUTOINCREMENT,<br />
+"doc_id" TEXT, # document ID<br />
+"date" TEXT # date of publication<br />
+)</p>
+
+</p>
+
+</span>
+
+
+{% endblock %}

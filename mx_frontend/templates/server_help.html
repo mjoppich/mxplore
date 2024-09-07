@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Help</h1>
+
+<h2>Database view</h2>
+
+<p>
+    mx-plore is a database of miRNA-gene interactions retrieved from text mining <a href="https://pubmed.ncbi.nlm.nih.gov/">NCBI PubMed abstracts</a> and <a href="https://www.ncbi.nlm.nih.gov/pmc/">NCBI PubmedCentral full texts (oa_comm subset)</a>.
+    During text mining, interactions are classified as miRNA interacting with gene (MIR_GENE) or gene interacting with miRNA (GENE_MIR). The regulatory direction can either be negatively affecting the target (DOWN), positively affecting the target (UP) or undeterminable (NEU).
+</p>
+
+<p>
+    Even though the mx-plore text mining has a high F1-score (more than 0.9) in the <a href="https://f1000research.com/articles/3-205/v3">Bagewadi et al.</a> benchmark, this system is not fail proof.
+    Incorrect interactions can be retrieved from full texts. However, it is expected that the most prevalent interaction found in literature is a good proxy for correct interactions. Hence, the <i>consensus</i> column in the database view tells the user whether this is the most abundant interaction for this miRNA-gene pair (<i>consensus = yes</i>) or not (<i>consensus = no</i>).
+</p>
+
+<p>
+  By clicking on the details link in each entry the user is directed to a detailed view of the selected miRNA-gene interaction. Here the user can explore the underlying text-mining evidences, the context in which this miRNA is mentioned in as well as the history of publications on this miRNA-gene interaction.
+</p>
+
+<p>
+    Description of the table fields:
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Meaning</th>
+          </tr>
+          <tr><td>miRNA Family</td><td>miRNA name at pre-cursor level</td></tr>
+          <tr><td>Gene</td><td>Gene symbol of identified HGNC id</td></tr>
+          <tr><td>Interaction</td><td>Type of interaction between miRNA and gene</td></tr>
+          <tr><td>Organisms</td><td>Whether the gene identifier was found in the human (hsa) or mouse (mmu) gene synonym list.</td></tr>
+          <tr><td>Evidence Count</td><td>Number of documents identified for this interactions. This does not update upon filtering for context.</td></tr>
+          <tr><td>Consensus</td><td>Whether it is the most abundant interaction.</td></tr>
+          <tr><td>Details</td><td>Link to the details page with all text mining evidence.</td></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</p>
+
+<h2>Entry details view</h2>
+
+<h3>Interaction Details</h3>
+
+The shown interaction details contain the same information as described in the table above for the database view.
+Please note, that the organism is given in terms of whether a human or mouse gene synonym was matched.
+
+<h3>Interaction Context</h3>
+
+Article annotations are displayed in a word cloud. Annotations stem from textmining terms describing Gene Ontology terms, cell lines, diseases.
+
+Words are displayed larger the more frequent a word (or term) is mentioned in all evidence articles. The size of each entry scales exponentially with the number of occurrences.
+
+Note, this word cloud is only drawn if such annotations were retrieved for an article. The threshold for concepts to be shown is 1 if less than 100 distinct concepts were found, and 3 otherwise.
+
+
+<h3>Interaction Binding Sites</h3>
+
+<strong>Human</strong> gene structure and <a href="https://www.targetscan.org/vert_80/">TargetScan v8.0</a> miRNA binding site predictions (conserved sites of conserved miRNA families).
+If no miRNA binding sites are shown, no <it>conserved</it> sites of conserved miRNA families were predicted.
+
+For interactions found with human (and mouse) gene synonyms, only the human gene structure and miRNA binding sites are displayed.
+For interactions solely found with mouse gene synonyms, the corresponding mouse information from <a href="https://www.targetscan.org/mmu_80/">TargetScan v8.0 mouse</a> are displayed.
+
+<h3>Interaction Evidences</h3>
+
+Sentences in which evidence for the displayed miRNA-gene interaction and direction are found.
+Both miRNA and gene are highlighted.
+A link to the respective resource in <a href="https://pubmed.ncbi.nlm.nih.gov/">NCBI PubMed</a> or <a href="https://www.ncbi.nlm.nih.gov/pmc/">NCBI PubmedCentral</a> is provided.
+
+<h3>Interaction Timeline</h3>
+
+Timeline plot of the timeline articles. The relation of the articles along the time axis is visible, and the articles are briefly described in terms of their main content.
+The main content is determined by collecting the top 3 concepts from the celllines synonyms, biological processes and diseases.
+The identified concepts are collected and processed per category (cell lines, biological processes and diseases).
+For each identified concept the parent terms are retrieved from the underlying ontology.
+Then, the concept is added to a counter with weight one. Each parent is added with weight 2.
+Finally, the two top (highest weighted) elements from the counter are taken to describe the underlying concept in a publication.
+
+
+{% endblock %}
