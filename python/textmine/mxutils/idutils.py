@@ -4,11 +4,6 @@ import os
 from collections import defaultdict
 import sys
 
-dataDir = "/mnt/t/owncloud/data/"
-#dataDir = "/home/users/joppich/ownCloud/data/"
-
-miRExploreDir = dataDir + "miRExplore/"
-
 class ParseObject(object):
     pass
 

@@ -1,4 +1,4 @@
-MAINDIR=$(dirname "$0/../")
+MAINDIR="/mnt/extproj/projekte/textmining/"
 
 DATADIR=$MAINDIR
 RESULTSDIR=$MAINDIR/mx_feb24/
@@ -11,8 +11,8 @@ EN_NER_BIONLP13="$MAINDIR/spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp1
 
 MODEL_ARGS="--threads 20 --nlp ${EN_CORE_SCI_LG} --nlpent ${EN_NER_BIONLP13}"
 
-MIREXPLORE_PATH=$MAINDIR/python/
-ENTENTSCRIPT=$MIREXPLORE_PATH/createEntEntRelation.py
+MIREXPLORE_PATH=$MAINDIR/miRExplore/python/
+ENTENTSCRIPT=$MIREXPLORE_PATH/relation_extraction/createEntEntRelation.py
 OUTPREFIX=$RESULTSDIR"/aggregated_pubmed/"
 
 mkdir -p $OUTPREFIX
@@ -37,7 +37,7 @@ echo "Found Documents"
 wc -l $OUTPREFIX/relevant_pmids.list
 
 # CONTEXT EXTRACTION
-CONTEXTSCRIPT="$MIREXPLORE_PATH/createContextInfo.py --threads 20"
+CONTEXTSCRIPT="$MIREXPLORE_PATH/relation_extraction/createContextInfo.py --threads 20"
 
 CMD="python -O $CONTEXTSCRIPT --sentid-no-text --accept-pmids $OUTPREFIX/relevant_pmids.list --datadir $MAINDIR --sentdir $SENTDIR --resultdir $TMDIR/disease/ --obo $MAINDIR/obodir/doid.obo"
 echo $CMD

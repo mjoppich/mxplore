@@ -1,18 +1,19 @@
-MAINDIR=$(dirname "$0/../")
+MAINDIR="/mnt/extproj/projekte/textmining/"
 
 DATADIR=$MAINDIR
-RESULTSDIR=$MAINDIR/mxresults/
+RESULTSDIR=$MAINDIR/mx_feb24/
 TMDIR=$RESULTSDIR/results.pmc.oa_comm/
+SENTDIR=/mnt/extproj/projekte/textmining/pmc_feb24/oa_comm/
 OUTPREFIX=$RESULTSDIR"/aggregated_pmc/"
 
-SENTDIR=/mnt/extproj/projekte/textmining/pmc_feb24/oa_comm/
+
 EN_CORE_SCI_LG="/mnt/extproj/projekte/textmining/spacy_models/en_core_sci_lg-0.2.4/en_core_sci_lg/en_core_sci_lg-0.2.4"
 EN_NER_BIONLP13="/mnt/extproj/projekte/textmining/spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp13cg_md/en_ner_bionlp13cg_md-0.2.4"
 
 MODEL_ARGS="--threads 20 --nlp ${EN_CORE_SCI_LG} --nlpent ${EN_NER_BIONLP13}"
 
-MIREXPLORE_PATH=$MAINDIR/python/textmine/
-ENTENTSCRIPT=$MIREXPLORE_PATH/createEntEntRelation.py
+MIREXPLORE_PATH=$MAINDIR/miRExplore/python/
+ENTENTSCRIPT=$MIREXPLORE_PATH/relation_extraction/createEntEntRelation.py
 
 mkdir -p $OUTPREFIX
 

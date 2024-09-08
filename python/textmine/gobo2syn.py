@@ -6,7 +6,7 @@ from mxutils.GeneOntology import GeneOntology
 
 from mxutils.Synonym import Synonym
 from mxutils.SynonymUtils import handleCommonExcludeWords
-from mxutils.idutils import loadExludeWords, printToFile
+from mxutils.idutils import loadExludeWords, printToFile, speciesName2TaxID
 
 
 if __name__ == '__main__':
