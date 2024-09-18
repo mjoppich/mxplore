@@ -20,3 +20,7 @@ by cell type, disease or involved processes. The platform is available at
 on GitHub.
 
 If you want to run parts of the pipeline yourself, check the [commands.md](https://github.com/mjoppich/mxplore/blob/main/commands.md).
+
+## Platform
+
+![screenshot of mxplore platform](./mxplore/img/mxplore_platform_snapshot.png)

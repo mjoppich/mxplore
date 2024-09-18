@@ -196,3 +196,21 @@ Execute the notebooks in $MXPLORE_PATH$/python/postproc/ in the following order:
     create_sqlite_databases.ipynb
     
 
+# Benchmark
+
+In order to run the Bagewadi et al. benchmark, use the scripts in the scai_eval folder.
+
+Run
+
+    TestClassifications.ipynb
+
+to get global results.
+
+The notebook
+
+    AllScaiComparisons.ipynb
+
+generates results using all combinations of the various rules and delivers finegrained results, which can be visualized using
+
+    eval_check.ipynb
+

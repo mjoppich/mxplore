@@ -18,7 +18,7 @@ import copy
 
 from io import BytesIO
 
-app = Flask(__name__, static_url_path="/static/", static_folder='/mnt/extproj/projekte/textmining/mx_frontend/static/')
+app = Flask(__name__, static_url_path="/static/", static_folder='/mnt/extproj/projekte/textmining/mxplore/mx_frontend/static/')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cons_evidences.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -26,12 +26,12 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 from collections import Counter
 
-mx_base = "/mnt/raidbio/extproj/projekte/textmining/"
-mx_python = f"{mx_base}/miRExplore/python/"
+mx_base = "/mnt/extproj/projekte/textmining/mxplore/"
+mx_python = f"{mx_base}/python/textmine/"
 oboFolder = f"{mx_base}/obodir/"
 
 sys.path.insert(0, mx_python)
-from synonymes.GeneOntology import GeneOntology
+from mxutils.GeneOntology import GeneOntology
 
 
 infodict2obo = {}
@@ -41,16 +41,16 @@ infodict2obo["GeneOntology"] = GeneOntology(oboFolder + "/go.obo")
 
 
 
-with open("/mnt/extproj/projekte/textmining/mx_frontend/hg19_mirna_annotation.pickle", "rb") as fout:
+with open(f"{mx_base}/mx_frontend/hg19_mirna_annotation.pickle", "rb") as fout:
     allMirnaAnnotsHG19 = pickle.load(fout)
 
-with open("/mnt/extproj/projekte/textmining/mx_frontend/hg19_gene_annotation.pickle", "rb") as fout:
+with open(f"{mx_base}/mx_frontend/hg19_gene_annotation.pickle", "rb") as fout:
     allGeneAnnotsHG19 = pickle.load(fout)
     
-with open("/mnt/extproj/projekte/textmining/mx_frontend/mm10_mirna_annotation.pickle", "rb") as fout:
+with open(f"{mx_base}/mx_frontend/mm10_mirna_annotation.pickle", "rb") as fout:
     allMirnaAnnotsMM10 = pickle.load(fout)
 
-with open("/mnt/extproj/projekte/textmining/mx_frontend/mm10_gene_annotation.pickle", "rb") as fout:
+with open(f"{mx_base}/mx_frontend/mm10_gene_annotation.pickle", "rb") as fout:
     allGeneAnnotsMM10 = pickle.load(fout)
 
 
