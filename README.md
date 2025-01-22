@@ -20,6 +20,9 @@ by cell type, disease or involved processes. The platform is available at
 on GitHub.
 
 If you want to run parts of the pipeline yourself, check the [commands.md](https://github.com/mjoppich/mxplore/blob/main/commands.md).
+Please make sure to download required data from our [zenodo repository](https://doi.org/10.5281/zenodo.12704497).
+
+Please cite our preprint/publication on mxplore.
 
 ## Platform
 
