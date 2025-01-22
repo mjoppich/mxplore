@@ -23,4 +23,6 @@ If you want to run parts of the pipeline yourself, check the [commands.md](https
 
 ## Platform
 
-![screenshot of mxplore platform](./mxplore/img/mxplore_platform_snapshot.png)
+The platform provides a detailled view of the miRNA-gene interaction context, TargetScan-predicted miRNA binding sites, the sentence evidences as well as a timeline of relevant articles.
+
+![screenshot of mxplore platform](./img/mxplore_platform_snapshot.png?raw=true)
