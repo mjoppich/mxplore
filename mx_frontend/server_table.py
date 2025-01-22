@@ -250,7 +250,16 @@ def extract_sentences( sent_evidences ):
     
     return retList
 
+def make_url( docid ):
+    if docid.startswith("PMC"):
+        return "https://www.ncbi.nlm.nih.gov/pmc/articles/{}/".format(docid)
+    else:
+        return "https://pubmed.ncbi.nlm.nih.gov/{}/".format(docid)
+
 def make_link( docid ):
+    
+    return "<a href='{}'>{}</a>".format(make_url(docid), docid)
+    
     if docid.startswith("PMC"):
         return "<a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}/'>{}</a>".format(docid, docid)
     else:
@@ -353,6 +362,7 @@ def details(mirna, gene, interaction):
         "sentences": sentenceData,
         "annotations": foundConcepts, 
         "timeline_url": "/{}/timeline/{}/{}/{}".format(hostFolder,mirna, gene, interaction),
+        "timelinedata_url": "/{}/timelinedata/{}/{}/{}".format(hostFolder,mirna, gene, interaction),
         "host": hostFolder
     })
 
@@ -550,6 +560,49 @@ def timeline_details(mirna, gene, interaction):
     return send_file(img, mimetype='image/jpeg')
 
 
+@app.route('/timelinedata/<mirna>/<gene>/<interaction>') 
+def timeline_data(mirna, gene, interaction):
+
+    session = db.session()
+    allInteractions = generateInteractionHistory(cursor=session, gene=gene, mir=mirna, interaction=interaction, obodict=infodict2obo, return_data=True)
+    
+    allInteractions = sorted(allInteractions, key=lambda x: x["date"])
+    
+    entries = []
+
+    for x in allInteractions:
+        
+        ctx_string = ""
+        for ctx in x["context"]:
+            for elem in x["context"][ctx]:
+                ctx_string += "{} ({})<br/>".format(elem[0], elem[1])
+            ctx_string += "<br/>"
+            
+        authors = "; ".join(x["authors"]) + "; et al."
+        journal = x["journal"]
+        title = x["title"]
+        
+        if len(title) > 30:
+            title = title[:30] + "..."
+        
+        date = x["date"].strftime("%B %Y")
+                    
+        pmidDesc = """
+        <span><strong>{}</strong><br/>
+        <span>{}</span><br/>
+        <span>{}</span><br/>
+        <span>{} {} {}</span><br/><br/>
+        <span>{}</span></span>""".format(x["interaction"], title, authors, journal, date, x["doc_id"], ctx_string )
+        
+        
+        x["doc_id"]
+        
+        entries.append({"year": date, "title": pmidDesc, "pmcurl": make_url(x["doc_id"])})
+
+    # response
+    return json.dumps({
+        'data': entries
+    })
 
 
 def get_relation_data(cursor, mirna, gene, interaction):
@@ -601,6 +654,46 @@ def get_doc_pubdates(cursor, documents):
         if x[1].startswith("0000"):
             continue
         results[x[0]] = datetime.datetime.strptime(x[1], '%Y-%m-%d')
+
+    return results
+
+def get_doc_authors(cursor, documents):
+    
+    query = """
+    SELECT doc_id, firstname, lastname FROM mx_authors WHERE doc_id IN ({});
+    """.format(",".join(["'{}'".format(x) for x in documents]))
+    
+    sqlres = cursor.execute(query)
+    
+    results = defaultdict(list)
+    for x in sqlres:
+        results[x[0]].append( "{} {}".format(x[1], x[2]) )
+
+    return results
+
+def get_doc_journals(cursor, documents):
+    query = """
+    SELECT doc_id, journal FROM mx_journals WHERE doc_id IN ({});
+    """.format(",".join(["'{}'".format(x) for x in documents]))
+    
+    sqlres = cursor.execute(query)
+    
+    results = dict()
+    for x in sqlres:
+        results[x[0]] = x[1]
+
+    return results
+
+def get_doc_titles(cursor, documents):
+    query = """
+    SELECT doc_id, title FROM mx_titles WHERE doc_id IN ({});
+    """.format(",".join(["'{}'".format(x) for x in documents]))
+    
+    sqlres = cursor.execute(query)
+    
+    results = dict()
+    for x in sqlres:
+        results[x[0]] = x[1]
 
     return results
         
@@ -755,7 +848,7 @@ def get_doc_contexts(cursor, doc_ids, context_obos, printable=True):
             for elem, _ in result[doc_id][context].most_common(2):
                 
                 elem_name, elem_id = elem
-                if len(elem_name) > 25:
+                if len(elem_name) > 30:
                     elem_name = elem_name[:17] + " ..."
                 
                 print_results[doc_id][context].append( (elem_name, elem_id) )
@@ -790,7 +883,7 @@ def get_doc_with_contexts(cursor, relevant_documents, context, obodict):
     return accepted_documents
 
 
-def generateInteractionHistory( cursor, gene, mir, interaction, title="", obodict={}, context=None):
+def generateInteractionHistory( cursor, gene, mir, interaction, title="", obodict={}, context=None, return_data=False):
     
     mir_gene_interactions = get_relation_data(cursor, mir, gene, interaction)
     
@@ -810,6 +903,11 @@ def generateInteractionHistory( cursor, gene, mir, interaction, title="", obodic
     contexts = get_doc_contexts(cursor, relevant_documents, obodict)
     
     docDates = get_doc_pubdates(cursor, relevant_documents)
+    docAuthors = get_doc_authors(cursor, relevant_documents)
+    docJournals = get_doc_journals(cursor, relevant_documents)
+    docTitles = get_doc_titles(cursor, relevant_documents)
+    #docJournals = {}
+    #docTitles = {}
     
     print_entries = []
     for entry in mir_gene_interactions:
@@ -826,10 +924,17 @@ def generateInteractionHistory( cursor, gene, mir, interaction, title="", obodic
             if not doc_id in docDates:
                 continue
             
-            doc_entry["date"] = docDates[doc_id]
+            doc_entry["date"] = docDates.get(doc_id, None)
+            doc_entry["authors"] = docAuthors.get(doc_id, [])
+            doc_entry["journal"] = docJournals.get(doc_id, "-/-")
+            doc_entry["title"] = docTitles.get(doc_id, "-/-")
             doc_entry["context"] = contexts[doc_id]
             
             print_entries.append(doc_entry)
+
+    if return_data:
+        return print_entries
+
 
     if len(print_entries):
         return make_timeline( print_entries, title, outpath=None )

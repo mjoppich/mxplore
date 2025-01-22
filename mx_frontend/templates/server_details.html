@@ -78,7 +78,11 @@
   <p>
     <h2>Interaction Timeline</h2>
     Timeline plot of the timeline articles. The relation of the articles along the time axis is visible, and the articles are briefly described in terms of their main content (regarding cell lines, biological processes and diseases).
-    <img src="{{ timeline_url }}" width="100%"/>
+    <!--<img src="{{ timeline_url }}" width="100%"/> -->
+
+
+    <div id="timeline"></div>
+
   </p>
 
 <script type="text/javascript" charset="utf8" src="{{url_for('static', filename='genomicviewer.js')}}"></script>
@@ -90,6 +94,44 @@
 
 {% if (annotations|length > 0) %}
   <script>
+
+
+    async function getTimelineData() {
+      const url = "{{ timelinedata_url }}";
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+    
+        const json = await response.json();
+        console.log(json);
+
+        milestones('#timeline')
+        .mapping({
+          'timestamp': 'year',
+          'text': 'title',
+          "url": 'pmcurl'
+        })
+        .urlTarget("_blank")
+        .optimize(true)
+        .parseTime('%B %Y')
+        .aggregateBy('month')
+        .render(json.data)
+        .onEventMouseOver((d) => {
+          //console.log('mouseover', d);
+        })
+        .onEventMouseLeave((d) => {
+          //console.log('mouseleave', d);
+        });
+
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    
+
     // List of words
     var myWords = {{annotations|safe}}
 
@@ -103,6 +145,9 @@
       .words(myWords)
       .scale("log")
       .start();
+
+
+      getTimelineData()
 
     });
     </script>

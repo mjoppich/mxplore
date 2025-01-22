@@ -6,11 +6,12 @@ sys.path.insert(0, str(os.path.dirname(os.path.realpath(__file__))) + "/../")
 from collections import defaultdict
 from lxml import etree
 import tarfile
-from utils.idutils import eprint
+from mxutils.idutils import eprint
+
 import logging
 import nltk.data
 from copy import deepcopy
-from utils.parallel import MapReduce
+from mxutils.parallel import MapReduce
 import spacy
 import scispacy
 
@@ -600,6 +601,8 @@ if __name__ == '__main__':
             datefile = os.path.join(storagePath, basefile.replace(file_extension, ".date"))
             typefile = os.path.join(storagePath, basefile.replace(file_extension, ".pubtype"))
             pmidfile = os.path.join(storagePath, basefile.replace(file_extension, ".pmid"))
+            journalfile = os.path.join(storagePath, basefile.replace(file_extension, ".journal"))
+
 
             print(sentfile, titlefile, authorfile, citationfile, datefile, typefile, pmidfile, sep="\n")
 
@@ -612,6 +615,8 @@ if __name__ == '__main__':
                 datefile = os.path.join(args.output, os.path.basename(datefile))
                 typefile = os.path.join(args.output, os.path.basename(typefile))
                 pmidfile = os.path.join(args.output, os.path.basename(pmidfile))
+                journalfile = os.path.join(args.output, os.path.basename(journalfile))
+
 
             print(filename, basefile, sentfile)
 
@@ -621,7 +626,7 @@ if __name__ == '__main__':
             pmid2authors = defaultdict(set)
             pmid2citations = defaultdict(set)
 
-            with open(sentfile, 'w') as outfile, open(datefile, 'w') as outdate, open(typefile, "w") as outtype, open(pmidfile, "w") as outpmid, open(titlefile, 'w') as outtitle, open(authorfile, 'w') as outauthor, open(citationfile, 'w') as outcitation:
+            with open(sentfile, 'w') as outfile, open(datefile, 'w') as outdate, open(journalfile, 'w') as outjournal, open(typefile, "w") as outtype, open(pmidfile, "w") as outpmid, open(titlefile, 'w') as outtitle, open(authorfile, 'w') as outauthor, open(citationfile, 'w') as outcitation:
                 
 
 
@@ -671,6 +676,9 @@ if __name__ == '__main__':
 
                             if entry.title != None:
                                 print(str(pmidID), str(entry.title), sep="\t", file=outtitle)
+                                
+                            if entry.journal != None:
+                                print(str(pmidID), str(entry.journal[0]), str(entry.journal[1]), sep="\t", file=outjournal)
 
                             if entry.authors != None and len(entry.authors) > 0:
                                 

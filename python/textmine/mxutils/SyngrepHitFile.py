@@ -1,6 +1,11 @@
 from collections import defaultdict
 import io
-from textmining.SyngrepHit import SyngrepHit
+
+import os, sys
+
+sys.path.insert(0, str(os.path.dirname(os.path.realpath(__file__))) + "/../")
+
+from mxutils.SyngrepHit import SyngrepHit
 
 
 class SyngrepHitFile:

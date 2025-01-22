@@ -39,6 +39,10 @@ if __name__ == '__main__':
     ignoreTermIDs = set(ignoreTermIDs)
     print("Ignore Terms", len(ignoreTermIDs))
 
+    exclude_words_manual = {"NCIT:C63459": ["PCR"],
+                            "any": ["regression", "follow-up", "randomized", "evaluated", "evaluate", "monitoring", "sensor", "targeted", "targeting", "computational", "biochemical", "statistically significant", "ability", "side effects", "pooled", "observational", "microscopy", "self-reported", "regression analysis", "laser", "biopsy", "optimization", "well-being", "wellbeing", "case report", "grade 3", "confidence interval", "ongoing", "lifestyle", "packaging", "localization", "recruitment", "calibration", "retrieval", "sequential", "follow up", "deployment", "case study", "healthcare"]}
+    
+
 
     for termID in ncitObo.dTerms:
 
@@ -54,10 +58,14 @@ if __name__ == '__main__':
         oboRels = oboNode.is_a
 
         newSyn = Synonym(oboID)
-        newSyn.addSyn(oboName)
+        
+        if not oboName.lower() in exclude_words_manual.get("any", []):
+            newSyn.addSyn(oboName)
 
         if oboSyns != None:
             for x in oboSyns:
+                if x.syn in exclude_words_manual.get(oboID, []) or x.syn.lower() in exclude_words_manual.get("any", []):
+                    continue
                 newSyn.addSyn(x.syn)
 
 
@@ -72,6 +80,9 @@ if __name__ == '__main__':
                 orgSyms = ncitTerm2Sym.org_term2symbol[org][ncitID]
 
                 for sym in orgSyms:
+                    
+                    if sym in exclude_words_manual.get(oboID, []) or x.syn.lower() in exclude_words_manual.get("any", []):
+                        continue
                     newSyn.addSyn(sym)
 
         vAllSyns.append(newSyn)

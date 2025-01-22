@@ -505,7 +505,7 @@ if __name__ == '__main__':
 
     allXMLFiles = glob.glob(storagePath+baseFileName+'*.xml.gz')
     
-    #allXMLFiles = [x for x in allXMLFiles if "pubmed24n0010" in x]
+    #allXMLFiles = [x for x in allXMLFiles if "pubmed24n1219" in x]
     #print(allXMLFiles)
 
     startFrom = 0
@@ -535,6 +535,7 @@ if __name__ == '__main__':
             sentfile = basefile.replace(".xml.gz", ".sent")
             titlefile = basefile.replace(".xml.gz", ".title")
             authorfile = basefile.replace(".xml.gz", ".author")
+            journalfile = basefile.replace(".xml.gz", ".journal")
             citationfile = basefile.replace(".xml.gz", ".citation")
             datefile = basefile.replace(".xml.gz", ".date")
             typefile = basefile.replace(".xml.gz", ".pubtype")
@@ -542,6 +543,7 @@ if __name__ == '__main__':
 
             pmid2title = {}
             pmid2authors = defaultdict(set)
+            pmid2journal = {}
             pmid2citations = defaultdict(set)
             pmid2date = {}
             pmid2types = defaultdict(set)
@@ -576,6 +578,9 @@ if __name__ == '__main__':
                         pmid2date[entry.pmid] = entry.pub_date
                         for dtype in entry.pub_types:
                             pmid2types[entry.pmid].add(dtype)
+                            
+                        if entry.journal != None:
+                            pmid2journal[entry.pmid] = entry.journal
 
                         if entry.cites != None and len(entry.cites) > 0:
                             for cite in entry.cites:
@@ -631,6 +636,15 @@ if __name__ == '__main__':
                         last = author[2] if author[2] != None else ''
 
                         outfile.write(str(pmid) + "\t" + "\t".join([first, initials, last]) + "\n")
+                        
+            with open(storagePath + journalfile, 'w') as outfile:
+
+                print(journalfile)
+
+                for pmid in pmid2journal:
+                    journal, journalabbrev = pmid2journal[pmid]
+
+                    outfile.write("{}\t{}\t{}\n".format(pmid, journal, journalabbrev))
 
             with open(storagePath + citationfile, 'w') as outfile:
 

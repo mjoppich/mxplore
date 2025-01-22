@@ -8,7 +8,7 @@ Prepare the environment and set paths as required.
 
     export JAVA_HOME=/mnt/extproj/projekte/textmining/jdk/openlogic-openjdk-11.0.22+7-linux-x64
 
-    export MXPLORE_PATH=/mnt/extproj/projekte/textmining/miRExplore/python/
+    export MXPLORE_PATH=/mnt/extproj/projekte/textmining/mxplore/
     export MIREXPLORE_RESULTS=/mnt/extproj/projekte/textmining/mxresults/
 
     mkdir -p obodir
@@ -44,7 +44,7 @@ Prepare the environment and set paths as required.
 
 Download all PubMed Abstracts via this call:
 
-    nohup /mnt/biosoft/software/python/3.11/mypy miRExplore/python/textmining/downloadPubmedAbstracts.py > nohup_pubmed_ftp &
+    nohup python miRExplore/python/textmining/downloadPubmedAbstracts.py > nohup_pubmed_ftp &
 
 And download PMC via FileZilla from: https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/
 
@@ -52,12 +52,18 @@ And download PMC via FileZilla from: https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bul
 
 ## PubMed
 
+Please adapt the xml-path to the actual location of the xml files!
 
-    nohup python $MXPLORE_PATH/python/medlineXMLtoStructure.py --base pubmed24n --xml-path /mnt/extproj/projekte/textmining/pubmed_feb24/ --threads 16 --model spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp13cg_md/en_ner_bionlp13cg_md-0.2.4 &> nohup_pubmed_extract &
+    nohup python $MXPLORE_PATH/python/textmine/medlineXMLtoStructure.py --base pubmed24n --xml-path /mnt/extproj/projekte/textmining/pubmed_feb24/ --threads 16 --model spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp13cg_md/en_ner_bionlp13cg_md-0.2.4 &> nohup_pubmed_extract &
+
+    nohup python $MXPLORE_PATH/python/textmine/medlineXMLtoStructure.py --base pubmed24n --xml-path /mnt/extproj/projekte/textmining/pubmed_oct24/ --threads 16 --model $MXPLORE_PATH/spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp13cg_md/en_ner_bionlp13cg_md-0.2.4 &> nohup_pubmed_extract &
 
 ## PMC
 
-    nohup python $MXPLORE_PATH/python/medlineXMLtoStructurePMCtar.py --base oa_comm --xml-path pmc_feb24/oa_comm/ --threads 16 --model spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp13cg_md/en_ner_bionlp13cg_md-0.2.4 &> nohup_pmc_extract &
+Please adapt the xml-path to the actual location of the xml files!
+
+    nohup python $MXPLORE_PATH/python/textmine/medlineXMLtoStructurePMCtar.py --base oa_comm --xml-path pmc_feb24/oa_comm/ --threads 16 --model spacy_models/en_ner_bionlp13cg_md-0.2.4/en_ner_bionlp13cg_md/en_ner_bionlp13cg_md-0.2.4 &> nohup_pmc_extract &
+
 
 ### Splitting Chunks
 

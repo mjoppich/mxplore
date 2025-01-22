@@ -49,7 +49,7 @@ def loadExludeWords(common=True, generic=True, syngrep=True, disease=True, taxna
 
     exclWords = defaultdict(set)
 
-    excludeDataDir = os.path.dirname(__file__) + "/../../exclude_words/"
+    excludeDataDir = os.path.dirname(__file__) + "/../../../required_data/excludes/"
 
     if common:
         """
