@@ -29,3 +29,8 @@ Please cite our preprint/publication on mxplore.
 The platform provides a detailled view of the miRNA-gene interaction context, TargetScan-predicted miRNA binding sites, the sentence evidences as well as a timeline of relevant articles.
 
 ![screenshot of mxplore platform](./img/mxplore_platform_snapshot.png?raw=true)
+
+
+## Environments
+
+The conda environment used for mxplore is given in [mxplore_environment.yaml](https://github.com/mjoppich/mxplore/blob/main/mxplore_environment.yaml) and all pip modules in [pip_requirements.txt](https://github.com/mjoppich/mxplore/blob/main/pip_requirements.txt) .
